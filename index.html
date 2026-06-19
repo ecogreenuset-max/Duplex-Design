@@ -75,6 +75,7 @@
         <li><a href="#about" class="nav-link">About</a></li>
         <li><a href="#services" class="nav-link">Services</a></li>
         <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+        <li><a href="#request" class="nav-link">Request Design</a></li>
         <li><a href="#pricing" class="nav-link">Pricing</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
@@ -471,21 +472,84 @@
         <div class="section-header reveal-fade">
           <div class="section-eyebrow light">Our Work</div>
           <h2 class="section-title light">Designs That <span class="gradient-text">Define Brands</span></h2>
-          <p class="section-desc light">A glimpse into the visual worlds we've built for our clients.</p>
+          <p class="section-desc light">A glimpse into the visual worlds we've built for our clients. Click any image to view full size.</p>
         </div>
 
+        <!-- Owner Upload Panel (Hidden by default, unlocked via password) -->
+        <div class="owner-panel-trigger reveal-fade">
+          <button class="owner-unlock-btn" id="ownerUnlockBtn" aria-label="Owner login">
+            <i class="fas fa-lock"></i> Owner Upload
+          </button>
+        </div>
+
+        <div class="owner-panel" id="ownerPanel" style="display:none;">
+          <div class="owner-panel-header">
+            <i class="fas fa-shield-alt"></i>
+            <span>Portfolio Manager — Duplax Graphics</span>
+            <button class="owner-panel-close" id="ownerPanelClose"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="owner-upload-zone" id="ownerDropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Drag & drop your design images here</p>
+            <span>or</span>
+            <label for="ownerFileInput" class="btn btn-primary btn-sm">Browse Files</label>
+            <input type="file" id="ownerFileInput" accept="image/*" multiple style="display:none;" />
+            <p class="upload-hint">PNG, JPG, WEBP up to 10MB each · Multiple files supported</p>
+          </div>
+          <div class="owner-upload-meta" id="ownerUploadMeta" style="display:none;">
+            <div class="upload-preview-strip" id="ownerPreviewStrip"></div>
+            <div class="upload-fields">
+              <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" id="ownerTitle" placeholder="e.g. Sunrise Restaurant Logo" />
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="ownerCategory">
+                  <option value="logo">Logos</option>
+                  <option value="flyer">Flyers</option>
+                  <option value="poster">Posters</option>
+                  <option value="card">Business Cards</option>
+                  <option value="brand">Branding</option>
+                  <option value="print">Printing Works</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="ownerAddBtn"><i class="fas fa-plus"></i> Add to Portfolio</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Modal -->
+        <div class="pw-modal" id="pwModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Owner login">
+          <div class="pw-modal-box">
+            <button class="pw-close" id="pwClose"><i class="fas fa-times"></i></button>
+            <div class="pw-icon"><i class="fas fa-lock"></i></div>
+            <h3>Owner Access</h3>
+            <p>Enter your password to manage the portfolio.</p>
+            <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password" />
+            <button class="btn btn-primary btn-full" id="pwSubmit">Unlock <i class="fas fa-arrow-right"></i></button>
+            <p class="pw-error" id="pwError" style="display:none;">Incorrect password. Try again.</p>
+          </div>
+        </div>
+        <div class="pw-overlay" id="pwOverlay" style="display:none;"></div>
+
+        <!-- Category Filter Tabs -->
         <div class="portfolio-filter reveal-fade">
           <button class="pf-btn active" data-filter="all">All</button>
-          <button class="pf-btn" data-filter="logo">Logos</button>
-          <button class="pf-btn" data-filter="flyer">Flyers</button>
-          <button class="pf-btn" data-filter="brand">Branding</button>
-          <button class="pf-btn" data-filter="card">Cards</button>
+          <button class="pf-btn" data-filter="logo"><i class="fas fa-pen-nib"></i> Logos</button>
+          <button class="pf-btn" data-filter="flyer"><i class="fas fa-newspaper"></i> Flyers</button>
+          <button class="pf-btn" data-filter="poster"><i class="fas fa-image"></i> Posters</button>
+          <button class="pf-btn" data-filter="card"><i class="fas fa-id-card"></i> Business Cards</button>
+          <button class="pf-btn" data-filter="brand"><i class="fas fa-layer-group"></i> Branding</button>
+          <button class="pf-btn" data-filter="print"><i class="fas fa-print"></i> Printing Works</button>
         </div>
 
-        <div class="portfolio-grid">
-          <!-- Portfolio items (SVG placeholders) -->
+        <!-- Portfolio Grid -->
+        <div class="portfolio-grid" id="portfolioGrid">
+
+          <!-- LOGOS -->
           <div class="port-item reveal-up" data-cat="logo">
-            <div class="port-img">
+            <div class="port-img port-svg-wrap">
               <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Logo design project">
                 <rect width="300" height="220" fill="#0A1931"/>
                 <circle cx="150" cy="90" r="45" fill="#0066FF" opacity="0.15"/>
@@ -497,14 +561,34 @@
             </div>
             <div class="port-overlay">
               <div class="port-info">
-                <span>Logo Design</span>
+                <span class="port-cat-badge">Logo</span>
                 <h4>Alpha Group Brand</h4>
               </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
             </div>
           </div>
 
-          <div class="port-item reveal-up delay-1" data-cat="flyer">
-            <div class="port-img">
+          <div class="port-item reveal-up delay-1" data-cat="logo">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Logo design">
+                <rect width="300" height="220" fill="#fff"/>
+                <polygon points="150,40 200,130 100,130" fill="#0066FF"/>
+                <rect x="110" y="135" width="80" height="10" rx="5" fill="#0A1931"/>
+                <rect x="125" y="153" width="50" height="8" rx="4" fill="#0066FF" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">Logo</span>
+                <h4>Peak Solutions Logo</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <!-- FLYERS -->
+          <div class="port-item reveal-up delay-2" data-cat="flyer">
+            <div class="port-img port-svg-wrap">
               <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Flyer design project">
                 <rect width="300" height="220" fill="#0a1020"/>
                 <rect x="0" y="0" width="300" height="100" fill="#0066FF" opacity="0.8"/>
@@ -520,14 +604,148 @@
             </div>
             <div class="port-overlay">
               <div class="port-info">
-                <span>Flyer Design</span>
+                <span class="port-cat-badge">Flyer</span>
                 <h4>Grand Opening Event</h4>
               </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
             </div>
           </div>
 
-          <div class="port-item reveal-up delay-2" data-cat="brand">
-            <div class="port-img">
+          <div class="port-item reveal-up delay-3" data-cat="flyer">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Social media graphic">
+                <rect width="300" height="220" fill="#0066FF"/>
+                <circle cx="150" cy="90" r="70" fill="white" opacity="0.07"/>
+                <circle cx="150" cy="90" r="50" fill="white" opacity="0.07"/>
+                <text x="150" y="78" text-anchor="middle" fill="white" font-size="13" font-family="sans-serif">SUMMER</text>
+                <text x="150" y="102" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="sans-serif">SALE</text>
+                <text x="150" y="120" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold" font-family="sans-serif">50% OFF</text>
+                <rect x="80" y="155" width="140" height="32" rx="16" fill="white"/>
+                <text x="150" y="176" text-anchor="middle" fill="#0066FF" font-size="12" font-weight="bold" font-family="sans-serif">SHOP NOW</text>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">Flyer</span>
+                <h4>Summer Sale Campaign</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <!-- POSTERS -->
+          <div class="port-item reveal-up" data-cat="poster">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Poster design">
+                <rect width="300" height="220" fill="#0A1931"/>
+                <rect x="0" y="0" width="300" height="220" fill="url(#pg1)"/>
+                <defs>
+                  <linearGradient id="pg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0066FF;stop-opacity:0.6"/>
+                    <stop offset="100%" style="stop-color:#0A1931;stop-opacity:1"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="150" cy="80" r="50" fill="none" stroke="#00BFFF" stroke-width="1.5" opacity="0.5"/>
+                <circle cx="150" cy="80" r="35" fill="none" stroke="#0066FF" stroke-width="1" opacity="0.7"/>
+                <text x="150" y="68" text-anchor="middle" fill="white" font-size="11" font-family="sans-serif" letter-spacing="3">MUSIC</text>
+                <text x="150" y="88" text-anchor="middle" fill="white" font-size="22" font-weight="bold" font-family="sans-serif">FESTIVAL</text>
+                <text x="150" y="103" text-anchor="middle" fill="#00BFFF" font-size="9" font-family="sans-serif">2025</text>
+                <rect x="60" y="145" width="180" height="1" fill="#0066FF" opacity="0.4"/>
+                <text x="150" y="165" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">SAT 14 JUNE · BANJUL, THE GAMBIA</text>
+                <rect x="100" y="180" width="100" height="20" rx="10" fill="#0066FF"/>
+                <text x="150" y="195" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">GET TICKETS</text>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">Poster</span>
+                <h4>Music Festival Poster</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <div class="port-item reveal-up delay-1" data-cat="poster">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Event poster">
+                <rect width="300" height="220" fill="#fff8f0"/>
+                <rect x="0" y="0" width="300" height="90" fill="#FF6B00"/>
+                <text x="150" y="42" text-anchor="middle" fill="white" font-size="28" font-weight="bold" font-family="sans-serif">AWARD</text>
+                <text x="150" y="70" text-anchor="middle" fill="white" font-size="13" font-family="sans-serif">CEREMONY 2025</text>
+                <circle cx="150" cy="110" r="22" fill="#FF6B00" opacity="0.15"/>
+                <circle cx="150" cy="110" r="15" fill="#FF6B00"/>
+                <text x="150" y="115" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="sans-serif">★</text>
+                <rect x="40" y="145" width="220" height="8" rx="4" fill="#ddd"/>
+                <rect x="60" y="162" width="180" height="6" rx="3" fill="#ddd"/>
+                <rect x="80" y="176" width="140" height="6" rx="3" fill="#ddd"/>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">Poster</span>
+                <h4>Award Ceremony Poster</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <!-- BUSINESS CARDS -->
+          <div class="port-item reveal-up delay-2" data-cat="card">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Business card design">
+                <rect width="300" height="220" fill="#0A1931"/>
+                <rect x="30" y="50" width="240" height="120" rx="14" fill="#0066FF"/>
+                <rect x="30" y="50" width="240" height="120" rx="14" fill="url(#bcg2)" opacity="0.3"/>
+                <defs>
+                  <linearGradient id="bcg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00BFFF"/>
+                    <stop offset="100%" style="stop-color:#0066FF" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="260" cy="60" r="30" fill="white" opacity="0.07"/>
+                <text x="55" y="95" fill="white" font-size="16" font-weight="bold" font-family="sans-serif">JAMES OWEN</text>
+                <text x="55" y="113" fill="#9fc8f0" font-size="10" font-family="sans-serif">Creative Director</text>
+                <text x="55" y="140" fill="white" font-size="9" font-family="sans-serif">+220 5817505</text>
+                <text x="55" y="155" fill="white" font-size="9" font-family="sans-serif">james@company.com</text>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">Business Card</span>
+                <h4>Executive Card Design</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <div class="port-item reveal-up delay-3" data-cat="card">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="ID card design">
+                <rect width="300" height="220" fill="#1a2d4a"/>
+                <rect x="50" y="30" width="200" height="160" rx="16" fill="#0A1931" stroke="#0066FF" stroke-width="1.5"/>
+                <rect x="50" y="30" width="200" height="50" rx="16" fill="#0066FF"/>
+                <rect x="50" y="60" width="200" height="20" fill="#0066FF"/>
+                <text x="150" y="62" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="sans-serif">STAFF ID CARD</text>
+                <rect x="75" y="95" width="50" height="60" rx="8" fill="#1a2d4a"/>
+                <circle cx="100" cy="115" r="15" fill="#0066FF" opacity="0.4"/>
+                <rect x="140" y="100" width="90" height="8" rx="4" fill="#2a3d5a"/>
+                <rect x="140" y="116" width="70" height="6" rx="3" fill="#2a3d5a"/>
+                <rect x="140" y="130" width="80" height="6" rx="3" fill="#2a3d5a"/>
+                <rect x="75" y="170" width="150" height="6" rx="3" fill="#0066FF" opacity="0.3"/>
+              </svg>
+            </div>
+            <div class="port-overlay">
+              <div class="port-info">
+                <span class="port-cat-badge">ID Card</span>
+                <h4>Corporate ID System</h4>
+              </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+            </div>
+          </div>
+
+          <!-- BRANDING -->
+          <div class="port-item reveal-up" data-cat="brand">
+            <div class="port-img port-svg-wrap">
               <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Brand identity project">
                 <rect width="300" height="220" fill="#F5F9FF"/>
                 <rect x="20" y="20" width="80" height="80" rx="12" fill="#0066FF"/>
@@ -546,121 +764,230 @@
             </div>
             <div class="port-overlay">
               <div class="port-info">
-                <span>Brand Identity</span>
+                <span class="port-cat-badge">Branding</span>
                 <h4>Nexora Brand System</h4>
               </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
             </div>
           </div>
 
-          <div class="port-item reveal-up delay-3" data-cat="card">
-            <div class="port-img">
-              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Business card design">
+          <!-- PRINTING WORKS -->
+          <div class="port-item reveal-up delay-1" data-cat="print">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="T-shirt printing">
                 <rect width="300" height="220" fill="#0A1931"/>
-                <rect x="30" y="50" width="240" height="120" rx="14" fill="#0066FF"/>
-                <rect x="30" y="50" width="240" height="120" rx="14" fill="url(#bcg)" opacity="0.3"/>
-                <defs>
-                  <linearGradient id="bcg" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#00BFFF"/>
-                    <stop offset="100%" style="stop-color:#0066FF" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="260" cy="60" r="30" fill="white" opacity="0.07"/>
-                <text x="55" y="95" fill="white" font-size="16" font-weight="bold" font-family="sans-serif">JAMES OWEN</text>
-                <text x="55" y="113" fill="#9fc8f0" font-size="10" font-family="sans-serif">Creative Director</text>
-                <text x="55" y="140" fill="white" font-size="9" font-family="sans-serif">+220 5817505</text>
-                <text x="55" y="155" fill="white" font-size="9" font-family="sans-serif">james@company.com</text>
-              </svg>
-            </div>
-            <div class="port-overlay">
-              <div class="port-info">
-                <span>Business Card</span>
-                <h4>Executive Card Design</h4>
-              </div>
-            </div>
-          </div>
-
-          <div class="port-item reveal-up" data-cat="logo">
-            <div class="port-img">
-              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Logo design">
-                <rect width="300" height="220" fill="#fff"/>
-                <polygon points="150,40 200,130 100,130" fill="#0066FF"/>
-                <rect x="110" y="135" width="80" height="10" rx="5" fill="#0A1931"/>
-                <rect x="125" y="153" width="50" height="8" rx="4" fill="#0066FF" opacity="0.5"/>
-              </svg>
-            </div>
-            <div class="port-overlay">
-              <div class="port-info">
-                <span>Logo Design</span>
-                <h4>Peak Solutions Logo</h4>
-              </div>
-            </div>
-          </div>
-
-          <div class="port-item reveal-up delay-1" data-cat="flyer">
-            <div class="port-img">
-              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Social media graphic">
-                <rect width="300" height="220" fill="#0066FF"/>
-                <circle cx="150" cy="90" r="70" fill="white" opacity="0.07"/>
-                <circle cx="150" cy="90" r="50" fill="white" opacity="0.07"/>
-                <text x="150" y="78" text-anchor="middle" fill="white" font-size="13" font-family="sans-serif">SUMMER</text>
-                <text x="150" y="102" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="sans-serif">SALE</text>
-                <text x="150" y="120" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold" font-family="sans-serif">50% OFF</text>
-                <rect x="80" y="155" width="140" height="32" rx="16" fill="white"/>
-                <text x="150" y="176" text-anchor="middle" fill="#0066FF" font-size="12" font-weight="bold" font-family="sans-serif">SHOP NOW</text>
-              </svg>
-            </div>
-            <div class="port-overlay">
-              <div class="port-info">
-                <span>Social Media</span>
-                <h4>Summer Sale Campaign</h4>
-              </div>
-            </div>
-          </div>
-
-          <div class="port-item reveal-up delay-2" data-cat="brand">
-            <div class="port-img">
-              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="T-shirt branding">
-                <rect width="300" height="220" fill="#0A1931"/>
-                <!-- T-shirt shape -->
                 <path d="M90,50 L60,90 L100,100 L100,180 L200,180 L200,100 L240,90 L210,50 L180,70 Q150,80 120,70 Z" fill="#0066FF" opacity="0.9"/>
                 <text x="150" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">DUPLAX</text>
               </svg>
             </div>
             <div class="port-overlay">
               <div class="port-info">
-                <span>T-Shirt Branding</span>
-                <h4>Custom Apparel Design</h4>
+                <span class="port-cat-badge">Print</span>
+                <h4>T-Shirt Branding</h4>
               </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
             </div>
           </div>
 
-          <div class="port-item reveal-up delay-3" data-cat="card">
-            <div class="port-img">
-              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="ID card design">
-                <rect width="300" height="220" fill="#1a2d4a"/>
-                <rect x="50" y="30" width="200" height="160" rx="16" fill="#0A1931" stroke="#0066FF" stroke-width="1.5"/>
-                <rect x="50" y="30" width="200" height="50" rx="16" fill="#0066FF"/>
-                <rect x="50" y="60" width="200" height="20" fill="#0066FF"/>
-                <text x="150" y="62" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="sans-serif">STAFF ID CARD</text>
-                <rect x="75" y="95" width="50" height="60" rx="8" fill="#1a2d4a"/>
-                <circle cx="100" cy="115" r="15" fill="#0066FF" opacity="0.4"/>
-                <rect x="140" y="100" width="90" height="8" rx="4" fill="#2a3d5a"/>
-                <rect x="140" y="116" width="70" height="6" rx="3" fill="#2a3d5a"/>
-                <rect x="140" y="130" width="80" height="6" rx="3" fill="#2a3d5a"/>
-                <rect x="75" y="170" width="150" height="6" rx="3" fill="#0066FF" opacity="0.3"/>
+          <div class="port-item reveal-up delay-2" data-cat="print">
+            <div class="port-img port-svg-wrap">
+              <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="Banner printing">
+                <rect width="300" height="220" fill="#0A1931"/>
+                <rect x="20" y="60" width="260" height="100" rx="8" fill="#0066FF" opacity="0.9"/>
+                <rect x="20" y="60" width="260" height="100" rx="8" fill="url(#bannerGrad)" opacity="0.4"/>
+                <defs>
+                  <linearGradient id="bannerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#00BFFF"/>
+                    <stop offset="100%" style="stop-color:#0066FF" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <text x="150" y="102" text-anchor="middle" fill="white" font-size="11" font-family="sans-serif" letter-spacing="2">GRAND</text>
+                <text x="150" y="128" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="sans-serif">OPENING</text>
+                <circle cx="35" cy="55" r="5" fill="#1a2d4a"/>
+                <circle cx="265" cy="55" r="5" fill="#1a2d4a"/>
+                <circle cx="35" cy="165" r="5" fill="#1a2d4a"/>
+                <circle cx="265" cy="165" r="5" fill="#1a2d4a"/>
               </svg>
             </div>
             <div class="port-overlay">
               <div class="port-info">
-                <span>ID Card Design</span>
-                <h4>Corporate ID System</h4>
+                <span class="port-cat-badge">Print</span>
+                <h4>Banner & Signage</h4>
               </div>
+              <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
             </div>
+          </div>
+
+        </div><!-- /portfolio-grid -->
+
+        <!-- Empty state (shown when filter yields no results) -->
+        <div class="portfolio-empty" id="portfolioEmpty" style="display:none;">
+          <i class="fas fa-images"></i>
+          <p>No designs in this category yet. Check back soon!</p>
+        </div>
+
+        <!-- Lightbox -->
+        <div class="port-lightbox" id="portLightbox" style="display:none;" role="dialog" aria-modal="true" aria-label="Image viewer">
+          <div class="lb-overlay" id="lbOverlay"></div>
+          <div class="lb-box">
+            <button class="lb-close" id="lbClose" aria-label="Close"><i class="fas fa-times"></i></button>
+            <button class="lb-prev" id="lbPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+            <button class="lb-next" id="lbNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+            <div class="lb-img-wrap" id="lbImgWrap"></div>
+            <div class="lb-caption" id="lbCaption"></div>
           </div>
         </div>
 
         <div class="portfolio-cta reveal-fade">
           <a href="#contact" class="btn btn-primary">Commission Your Project <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CUSTOMER REQUEST SECTION ===== -->
+    <section id="request" class="customer-request section-pad">
+      <div class="container">
+        <div class="section-header reveal-fade">
+          <div class="section-eyebrow">Submit Your Idea</div>
+          <h2 class="section-title">Show Us What You <span class="gradient-text">Have In Mind</span></h2>
+          <p class="section-desc">Have a design style you love? Upload reference images and tell us what you want — we'll create something even better.</p>
+        </div>
+
+        <div class="request-grid">
+          <!-- Request form -->
+          <div class="request-form-wrap reveal-left">
+            <div class="request-steps">
+              <div class="req-step active" data-step="1"><span>1</span> Your Info</div>
+              <div class="req-step-line"></div>
+              <div class="req-step" data-step="2"><span>2</span> Your Idea</div>
+              <div class="req-step-line"></div>
+              <div class="req-step" data-step="3"><span>3</span> Upload</div>
+            </div>
+
+            <form class="request-form" id="requestForm" novalidate>
+              <!-- Step 1: Info -->
+              <div class="req-page active" id="reqPage1">
+                <h3>Your Contact Info</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="reqName">Full Name</label>
+                    <input type="text" id="reqName" placeholder="Your name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="reqPhone">Phone / WhatsApp</label>
+                    <input type="tel" id="reqPhone" placeholder="+220 XXXXXXX" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="reqEmail">Email Address</label>
+                  <input type="email" id="reqEmail" placeholder="you@example.com" />
+                </div>
+                <div class="form-group">
+                  <label for="reqService">Design Service</label>
+                  <select id="reqService" required>
+                    <option value="">Choose what you need...</option>
+                    <option value="logo">Logo Design</option>
+                    <option value="flyer">Flyer Design</option>
+                    <option value="poster">Poster Design</option>
+                    <option value="card">Business Cards</option>
+                    <option value="brand">Brand Identity</option>
+                    <option value="print">Printing Services</option>
+                    <option value="other">Something Else</option>
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" id="reqNext1">Continue <i class="fas fa-arrow-right"></i></button>
+              </div>
+
+              <!-- Step 2: Brief -->
+              <div class="req-page" id="reqPage2" style="display:none;">
+                <h3>Describe Your Idea</h3>
+                <div class="form-group">
+                  <label for="reqBrief">Project Brief</label>
+                  <textarea id="reqBrief" rows="4" placeholder="What's this design for? What message should it send? Any colors, words, or styles you have in mind?" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="reqBudget">Approximate Budget (Optional)</label>
+                  <select id="reqBudget">
+                    <option value="">Select a range...</option>
+                    <option>Under D500</option>
+                    <option>D500 – D1,000</option>
+                    <option>D1,000 – D2,500</option>
+                    <option>D2,500 – D5,000</option>
+                    <option>D5,000+</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="reqDeadline">When do you need it?</label>
+                  <input type="date" id="reqDeadline" />
+                </div>
+                <div class="req-page-nav">
+                  <button type="button" class="btn btn-ghost" id="reqBack2"><i class="fas fa-arrow-left"></i> Back</button>
+                  <button type="button" class="btn btn-primary" id="reqNext2">Continue <i class="fas fa-arrow-right"></i></button>
+                </div>
+              </div>
+
+              <!-- Step 3: Upload reference -->
+              <div class="req-page" id="reqPage3" style="display:none;">
+                <h3>Upload Reference Images <span class="optional-badge">Optional</span></h3>
+                <p class="req-upload-hint">Upload any designs you like, your logo, color palettes, or examples that inspire you. This helps us understand your vision.</p>
+
+                <div class="req-drop-zone" id="reqDropZone">
+                  <i class="fas fa-image"></i>
+                  <p>Drag images here or click to browse</p>
+                  <label for="reqFileInput" class="btn btn-ghost btn-sm">Browse Images</label>
+                  <input type="file" id="reqFileInput" accept="image/*" multiple style="display:none;" />
+                  <p class="upload-hint">Up to 5 images · PNG, JPG, WEBP</p>
+                </div>
+
+                <div class="req-preview-strip" id="reqPreviewStrip" style="display:none;"></div>
+
+                <div class="req-page-nav">
+                  <button type="button" class="btn btn-ghost" id="reqBack3"><i class="fas fa-arrow-left"></i> Back</button>
+                  <button type="submit" class="btn btn-primary" id="reqSubmit">
+                    <span>Send My Request</span> <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right side info -->
+          <div class="request-info reveal-right">
+            <div class="req-info-card">
+              <div class="req-info-icon"><i class="fas fa-bolt"></i></div>
+              <h4>Fast Response</h4>
+              <p>We review every request within 24 hours and reach out directly via WhatsApp or email.</p>
+            </div>
+            <div class="req-info-card">
+              <div class="req-info-icon"><i class="fas fa-lock"></i></div>
+              <h4>Your Files Are Safe</h4>
+              <p>Reference images you upload are used only to understand your vision — never shared or published.</p>
+            </div>
+            <div class="req-info-card">
+              <div class="req-info-icon"><i class="fas fa-infinity"></i></div>
+              <h4>Unlimited Revisions</h4>
+              <p>We refine the design until it's exactly what you imagined. Your satisfaction is the finish line.</p>
+            </div>
+            <a href="https://wa.me/2205817505?text=Hi%20Duplax%20Graphics!%20I%20want%20to%20request%20a%20design." target="_blank" rel="noopener" class="req-wa-btn">
+              <i class="fab fa-whatsapp"></i>
+              <div>
+                <strong>Prefer WhatsApp?</strong>
+                <span>Message us directly — we respond fast</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Success message -->
+        <div class="req-success" id="reqSuccess" style="display:none;">
+          <div class="req-success-inner">
+            <div class="req-success-icon"><i class="fas fa-check-circle"></i></div>
+            <h3>Request Received!</h3>
+            <p>Thank you! We've received your design request and will reach out to you shortly via WhatsApp or email.</p>
+            <a href="https://wa.me/2205817505" target="_blank" rel="noopener" class="btn btn-primary">
+              <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+            </a>
+          </div>
         </div>
       </div>
     </section>
