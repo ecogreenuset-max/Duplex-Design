@@ -418,3 +418,353 @@ portItems.forEach(item => {
     }
   });
 });
+
+/* =========================================
+   PORTFOLIO GALLERY — ENHANCED
+   ========================================= */
+
+/* --- Category Filter --- */
+(function() {
+  const filterBtns = document.querySelectorAll('.pf-btn');
+  const portItems  = document.querySelectorAll('#portfolioGrid .port-item');
+  const emptyState = document.getElementById('portfolioEmpty');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      let visible = 0;
+      portItems.forEach(item => {
+        const match = filter === 'all' || item.dataset.cat === filter;
+        item.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
+    });
+  });
+})();
+
+/* --- Lightbox --- */
+(function() {
+  const lb        = document.getElementById('portLightbox');
+  const lbOverlay = document.getElementById('lbOverlay');
+  const lbClose   = document.getElementById('lbClose');
+  const lbPrev    = document.getElementById('lbPrev');
+  const lbNext    = document.getElementById('lbNext');
+  const lbImgWrap = document.getElementById('lbImgWrap');
+  const lbCaption = document.getElementById('lbCaption');
+  if (!lb) return;
+
+  let currentItems = [];
+  let currentIdx   = 0;
+
+  function getVisibleItems() {
+    return Array.from(document.querySelectorAll('#portfolioGrid .port-item')).filter(i => i.style.display !== 'none');
+  }
+
+  function openLightbox(idx) {
+    currentItems = getVisibleItems();
+    currentIdx   = idx;
+    showItem();
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showItem() {
+    const item = currentItems[currentIdx];
+    if (!item) return;
+    lbImgWrap.innerHTML = '';
+    const portImg = item.querySelector('.port-img');
+    const svg = portImg.querySelector('svg');
+    const img = portImg.querySelector('img');
+    if (img) {
+      const clone = img.cloneNode();
+      clone.style.maxHeight = '80vh';
+      clone.style.maxWidth  = '88vw';
+      clone.style.borderRadius = '12px';
+      lbImgWrap.appendChild(clone);
+    } else if (svg) {
+      const clone = svg.cloneNode(true);
+      clone.style.maxHeight = '70vh';
+      clone.style.maxWidth  = '88vw';
+      clone.style.borderRadius = '12px';
+      lbImgWrap.appendChild(clone);
+    }
+    const h4   = item.querySelector('h4');
+    const span = item.querySelector('.port-cat-badge');
+    lbCaption.textContent = (span ? span.textContent + ' — ' : '') + (h4 ? h4.textContent : '');
+    lbPrev.style.display = currentItems.length > 1 ? '' : 'none';
+    lbNext.style.display = currentItems.length > 1 ? '' : 'none';
+  }
+
+  function closeLightbox() {
+    lb.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('portfolioGrid').addEventListener('click', e => {
+    const btn  = e.target.closest('.port-zoom');
+    const item = e.target.closest('.port-item');
+    if (!item) return;
+    const items = getVisibleItems();
+    const idx   = items.indexOf(item);
+    if (idx >= 0) openLightbox(idx);
+  });
+
+  lbOverlay.addEventListener('click', closeLightbox);
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', () => { currentIdx = (currentIdx - 1 + currentItems.length) % currentItems.length; showItem(); });
+  lbNext.addEventListener('click', () => { currentIdx = (currentIdx + 1) % currentItems.length; showItem(); });
+  document.addEventListener('keydown', e => {
+    if (lb.style.display === 'none') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') { currentIdx = (currentIdx - 1 + currentItems.length) % currentItems.length; showItem(); }
+    if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % currentItems.length; showItem(); }
+  });
+})();
+
+/* =========================================
+   OWNER UPLOAD PANEL
+   ========================================= */
+(function() {
+  // !! Change this to your real password !!
+  const OWNER_PASSWORD = 'duplax2025';
+
+  const unlockBtn   = document.getElementById('ownerUnlockBtn');
+  const pwModal     = document.getElementById('pwModal');
+  const pwOverlay   = document.getElementById('pwOverlay');
+  const pwClose     = document.getElementById('pwClose');
+  const pwInput     = document.getElementById('pwInput');
+  const pwSubmit    = document.getElementById('pwSubmit');
+  const pwError     = document.getElementById('pwError');
+  const ownerPanel  = document.getElementById('ownerPanel');
+  const panelClose  = document.getElementById('ownerPanelClose');
+  const dropZone    = document.getElementById('ownerDropZone');
+  const fileInput   = document.getElementById('ownerFileInput');
+  const uploadMeta  = document.getElementById('ownerUploadMeta');
+  const previewStrip= document.getElementById('ownerPreviewStrip');
+  const addBtn      = document.getElementById('ownerAddBtn');
+  const titleInput  = document.getElementById('ownerTitle');
+  const catSelect   = document.getElementById('ownerCategory');
+  const grid        = document.getElementById('portfolioGrid');
+
+  if (!unlockBtn) return;
+
+  let pendingFiles = [];
+  let isUnlocked = false;
+
+  unlockBtn.addEventListener('click', () => {
+    if (isUnlocked) {
+      ownerPanel.style.display = ownerPanel.style.display === 'none' ? '' : 'none';
+      return;
+    }
+    pwModal.style.display = 'flex';
+    pwOverlay.style.display = 'block';
+    pwInput.value = '';
+    pwError.style.display = 'none';
+    setTimeout(() => pwInput.focus(), 50);
+  });
+
+  function closeModal() { pwModal.style.display = 'none'; pwOverlay.style.display = 'none'; }
+  pwClose.addEventListener('click', closeModal);
+  pwOverlay.addEventListener('click', closeModal);
+
+  function tryUnlock() {
+    if (pwInput.value === OWNER_PASSWORD) {
+      isUnlocked = true;
+      closeModal();
+      ownerPanel.style.display = '';
+      unlockBtn.innerHTML = '<i class="fas fa-lock-open"></i> Owner Panel';
+      unlockBtn.classList.add('unlocked');
+    } else {
+      pwError.style.display = 'block';
+      pwInput.select();
+    }
+  }
+  pwSubmit.addEventListener('click', tryUnlock);
+  pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+  panelClose.addEventListener('click', () => { ownerPanel.style.display = 'none'; });
+
+  // Drag & drop
+  ['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag-over'); }));
+  ['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.remove('drag-over'); }));
+  dropZone.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+  function handleFiles(files) {
+    pendingFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (!pendingFiles.length) return;
+    previewStrip.innerHTML = '';
+    pendingFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'prev-thumb';
+        previewStrip.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+    uploadMeta.style.display = '';
+  }
+
+  addBtn.addEventListener('click', () => {
+    if (!pendingFiles.length) return;
+    const title = titleInput.value.trim() || 'Duplax Design';
+    const cat   = catSelect.value;
+    const catLabels = { logo:'Logo', flyer:'Flyer', poster:'Poster', card:'Business Card', brand:'Branding', print:'Print' };
+
+    pendingFiles.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const item = document.createElement('div');
+        item.className = 'port-item reveal-up';
+        item.dataset.cat = cat;
+        item.innerHTML = `
+          <div class="port-img">
+            <img src="${ev.target.result}" alt="${title}" />
+          </div>
+          <div class="port-overlay">
+            <div class="port-info">
+              <span class="port-cat-badge">${catLabels[cat] || cat}</span>
+              <h4>${title}</h4>
+            </div>
+            <button class="port-zoom" aria-label="View full size"><i class="fas fa-expand-alt"></i></button>
+          </div>`;
+        grid.appendChild(item);
+        // Re-apply current filter
+        const activeFilter = document.querySelector('.pf-btn.active');
+        const filter = activeFilter ? activeFilter.dataset.filter : 'all';
+        if (filter !== 'all' && item.dataset.cat !== filter) item.style.display = 'none';
+        // Trigger reveal
+        requestAnimationFrame(() => item.classList.add('revealed'));
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset
+    pendingFiles = [];
+    fileInput.value = '';
+    titleInput.value = '';
+    previewStrip.innerHTML = '';
+    uploadMeta.style.display = 'none';
+    // Flash success
+    addBtn.innerHTML = '<i class="fas fa-check"></i> Added!';
+    setTimeout(() => { addBtn.innerHTML = '<i class="fas fa-plus"></i> Add to Portfolio'; }, 2500);
+  });
+})();
+
+/* =========================================
+   CUSTOMER REQUEST FORM
+   ========================================= */
+(function() {
+  const pages   = [null, document.getElementById('reqPage1'), document.getElementById('reqPage2'), document.getElementById('reqPage3')];
+  const steps   = document.querySelectorAll('.req-step');
+  const form    = document.getElementById('requestForm');
+  const success = document.getElementById('reqSuccess');
+  if (!form) return;
+
+  let currentPage = 1;
+
+  function goTo(n) {
+    pages[currentPage].style.display = 'none';
+    currentPage = n;
+    pages[currentPage].style.display = '';
+    steps.forEach((s, i) => {
+      s.classList.remove('active', 'done');
+      if (i + 1 < n) s.classList.add('done');
+      else if (i + 1 === n) s.classList.add('active');
+    });
+    if (steps[n - 1]) steps[n - 1].querySelector('span').innerHTML = n < currentPage ? '✓' : n;
+  }
+
+  document.getElementById('reqNext1').addEventListener('click', () => {
+    const name = document.getElementById('reqName');
+    const service = document.getElementById('reqService');
+    if (!name.value.trim()) { name.focus(); return; }
+    if (!service.value) { service.focus(); return; }
+    goTo(2);
+  });
+  document.getElementById('reqNext2').addEventListener('click', () => {
+    const brief = document.getElementById('reqBrief');
+    if (!brief.value.trim()) { brief.focus(); return; }
+    goTo(3);
+  });
+  document.getElementById('reqBack2').addEventListener('click', () => goTo(1));
+  document.getElementById('reqBack3').addEventListener('click', () => goTo(2));
+
+  // Customer file upload
+  const reqDrop   = document.getElementById('reqDropZone');
+  const reqFile   = document.getElementById('reqFileInput');
+  const reqPreview= document.getElementById('reqPreviewStrip');
+  let reqFiles    = [];
+  const MAX_FILES = 5;
+
+  ['dragenter','dragover'].forEach(ev => reqDrop.addEventListener(ev, e => { e.preventDefault(); reqDrop.classList.add('drag-over'); }));
+  ['dragleave','drop'].forEach(ev => reqDrop.addEventListener(ev, e => { e.preventDefault(); reqDrop.classList.remove('drag-over'); }));
+  reqDrop.addEventListener('drop', e => handleReqFiles(e.dataTransfer.files));
+  reqDrop.addEventListener('click', () => reqFile.click());
+  reqFile.addEventListener('change', () => handleReqFiles(reqFile.files));
+
+  function handleReqFiles(files) {
+    const newFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    reqFiles = [...reqFiles, ...newFiles].slice(0, MAX_FILES);
+    renderReqPreviews();
+  }
+
+  function renderReqPreviews() {
+    reqPreview.innerHTML = '';
+    if (!reqFiles.length) { reqPreview.style.display = 'none'; return; }
+    reqPreview.style.display = 'flex';
+    reqFiles.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const wrap = document.createElement('div');
+        wrap.className = 'prev-thumb-wrap';
+        wrap.innerHTML = `<img src="${e.target.result}" class="prev-thumb" alt="reference" /><button class="remove-thumb" data-idx="${idx}" aria-label="Remove"><i class="fas fa-times"></i></button>`;
+        reqPreview.appendChild(wrap);
+        wrap.querySelector('.remove-thumb').addEventListener('click', () => {
+          reqFiles.splice(idx, 1);
+          renderReqPreviews();
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('reqSubmit');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
+
+    // Build WhatsApp message with form data
+    const name    = document.getElementById('reqName').value.trim();
+    const phone   = document.getElementById('reqPhone').value.trim();
+    const email   = document.getElementById('reqEmail').value.trim();
+    const service = document.getElementById('reqService').value;
+    const brief   = document.getElementById('reqBrief').value.trim();
+    const budget  = document.getElementById('reqBudget').value;
+    const deadline= document.getElementById('reqDeadline').value;
+    const fileCount = reqFiles.length;
+
+    const msg = encodeURIComponent(
+      `Hi Duplax Graphics! I'd like to request a design.\n\n` +
+      `Name: ${name}\nPhone: ${phone || 'Not provided'}\nEmail: ${email || 'Not provided'}\n` +
+      `Service: ${service}\nBrief: ${brief}\n` +
+      (budget ? `Budget: ${budget}\n` : '') +
+      (deadline ? `Deadline: ${deadline}\n` : '') +
+      (fileCount ? `\nI'll also send ${fileCount} reference image(s) separately.` : '')
+    );
+
+    // Show success, open WhatsApp
+    setTimeout(() => {
+      form.style.display = 'none';
+      success.style.display = 'block';
+      window.open(`https://wa.me/2205817505?text=${msg}`, '_blank');
+    }, 1000);
+  });
+})();
